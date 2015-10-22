@@ -1,0 +1,61 @@
+
+-if @product.has_auction?  
+  -if @product.auction.ended?
+    =render "auction/status"
+  
+  
+  -else  
+    =form_for [ @product, @product.auction, Bid.new ] do |f|
+      %p.message 
+        %strong        
+          -if @product.auction.top_bid.present?
+            -if @product.auction.top_bid.user_id == current_user.id
+              Current Bid:
+            -else
+              You were outbid:
+            
+            =@product.auction.current_bid  
+      %p
+        %strong
+          Ends at: #{l(@product.auction.ends_at, format: :short)}
+      %p
+        %strong
+          Place Bid:
+          =f.text_field :value
+          =f.button class: "btn btn-primary"
+          
+  :css
+    h3.top-bidder {
+      font-family: Calibri;
+      font-size: 14px;
+      font-style: normal;
+      font-variant: normal;
+      font-weight: light;
+      line-height: 15.3999996185303px;
+    }
+    
+    span.top-bidder-name {
+      font-family: Times;
+      font-size: 14px;
+      font-style: italic;
+      font-variant: normal;
+      font-weight: bold;
+      line-height: 15.3999996185303px;
+    
+    }
+
+:javascript
+        
+    $(function() {
+      var user_id = "#{current_user.id}";
+      var user_name = "#{current_user.name}";
+      var auction_id = "#{@product.auction.id}";
+      var form = $("#new_bid");
+    
+      var auctionSocket = new AuctionSocket(
+        user_id,
+        user_name,
+        auction_id,
+        form
+      );
+    });

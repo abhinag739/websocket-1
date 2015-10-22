@@ -1,0 +1,14 @@
+-if @product.auction.top_bid.present?
+  -if @product.auction.top_bid.user_id == current_user.id
+    %p You won the auction!
+    %p
+      =link_to "Claim this product", transfer_product_path(@product), class: "btn btn-primary", method: :put
+  -else
+    %p You lost the auction.
+-else 
+  %p
+  Auction ended, product sold to
+  %span.top-bidder-name
+    =@product.user[:name]
+ 
+    
